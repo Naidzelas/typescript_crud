@@ -13,7 +13,7 @@ export default defineConfig({
       exposes: {
         './UploadButton': './src/components/UploadButton.vue',
       },
-      shared: ['vue'],
+      shared: ['vue', 'primevue'],
     }),
     tailwindcss(),
   ],

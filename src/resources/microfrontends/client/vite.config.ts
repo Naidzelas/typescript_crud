@@ -13,7 +13,7 @@ export default defineConfig({
       exposes: {
         './Clients': './src/pages/Clients.vue',
       },
-      shared: ['vue'],
+      shared: ['vue', 'primevue'],
     }),
     tailwindcss(),
   ],
