@@ -41,4 +41,66 @@ export class ClientController {
             res.status(500).json({ message: 'Error updating client', error });
         }
     }
+
+    async getAllClients(): Promise<Client[]> {
+        try {
+            const pool = await getConnection();
+            const result = await pool.request().query('SELECT * FROM Clients');
+            return result.recordset;
+        } catch (error) {
+            throw new Error('Error fetching clients: ' + (error instanceof Error ? error.message : String(error)));
+        }
+    }
+
+    async bulkStore(req: any, res: any): Promise<void> {
+        const clients: Client[] = req.body.clients;
+        
+        if (!Array.isArray(clients)) {
+            res.status(400).json({ message: 'Invalid data format. Expected an array of clients.' });
+            return;
+        }
+
+        let inserted = 0;
+        let skipped = 0;
+        const errors: string[] = [];
+
+        try {
+            const pool = await getConnection();
+
+            for (const client of clients) {
+                try {
+                    // Check if client with same name and address already exists
+                    const checkResult = await pool.request()
+                        .input('name', sql.NVarChar(255), client.name)
+                        .input('address', sql.NVarChar(500), client.address)
+                        .query('SELECT id FROM clients WHERE name = @name AND address = @address');
+
+                    if (checkResult.recordset.length > 0) {
+                        skipped++;
+                        continue;
+                    }
+
+                    // Insert new client
+                    await pool.request()
+                        .input('name', sql.NVarChar(255), client.name)
+                        .input('address', sql.NVarChar(500), client.address)
+                        .input('postcode', sql.NVarChar(20), client.postcode || '')
+                        .query('INSERT INTO clients (name, address, postcode) VALUES (@name, @address, @postcode)');
+                    
+                    inserted++;
+                } catch (error) {
+                    errors.push(`Failed to insert ${client.name}: ${error instanceof Error ? error.message : String(error)}`);
+                }
+            }
+
+            res.status(201).json({ 
+                message: 'Bulk import completed',
+                inserted,
+                skipped,
+                errors: errors.length > 0 ? errors : undefined
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Error during bulk import', error });
+        }
+    }
 }

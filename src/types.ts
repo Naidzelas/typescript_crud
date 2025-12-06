@@ -1,20 +1,22 @@
 export interface Client {
-    id: number;
+    id?: number;
     name: string;
     address: string;
-    created_at: Date;
-    updated_at: Date;
+    postcode?: string;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface AppActivityLog {
-    id: number;
+    id?: number;
     code: number;
+    action: string;
     payload: {
         name: string;
         message: string;
     };
     // created_by: number;
-    created_at: Date;
+    created_at?: Date;
 }
 
 export interface OutgoingRequest {

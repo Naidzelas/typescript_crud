@@ -18,6 +18,7 @@ BEGIN
         [id] INT IDENTITY(1,1) PRIMARY KEY,
         [name] NVARCHAR(255) NOT NULL,
         [address] NVARCHAR(500) NOT NULL,
+        [postcode] NVARCHAR(20) NOT NULL,
         [created_at] DATETIME2 DEFAULT GETDATE(),
         [updated_at] DATETIME2 DEFAULT GETDATE()
     );
@@ -30,8 +31,23 @@ BEGIN
     CREATE TABLE [dbo].[app_activity_log] (
         [id] INT IDENTITY(1,1) PRIMARY KEY,
         [code] INT NOT NULL,
+        [action] NVARCHAR(255) NOT NULL,
         [payload] JSON NOT NULL,
         [created_at] DATETIME2 DEFAULT GETDATE(),
+    );
+END
+GO
+
+-- App Activity Log table
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[outgoing_requests]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE [dbo].[outgoing_requests] (
+        [id] INT IDENTITY(1,1) PRIMARY KEY,
+        [endpoint] NVARCHAR(255) NOT NULL,
+        [method] NVARCHAR(10) NOT NULL,
+        [payload] JSON NOT NULL,
+        [code] INT NOT NULL,
+        [created_at] DATETIME2 DEFAULT GETDATE()
     );
 END
 GO
