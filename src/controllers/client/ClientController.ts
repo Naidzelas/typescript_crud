@@ -8,7 +8,7 @@ export class ClientController {
     async index(req: any, res: any): Promise<void> {
         try {
             const pool = await getConnection();
-            const result = await pool.request().query('SELECT * FROM Clients');
+            const result = await pool.request().query('SELECT * FROM clients');
             res.json(result.recordset);
         } catch (error) {
             res.status(500).json({ message: 'Error fetching clients', error });
@@ -20,8 +20,10 @@ export class ClientController {
         try {
             const pool = await getConnection();
             await pool.request()
-                .input('name', sql.NVarChar(100), client.name)
-                .query('INSERT INTO Clients (name, email, phone) VALUES (@name, @email, @phone)');
+                .input('name', sql.NVarChar(255), client.name)
+                .input('address', sql.NVarChar(500), client.address)
+                .input('postcode', sql.NVarChar(20), client.postcode || '')
+                .query('INSERT INTO clients (name, address, postcode) VALUES (@name, @address, @postcode)');
             res.status(201).json({ message: 'Client created successfully' });
         } catch (error) {
             res.status(500).json({ message: 'Error creating client', error });
@@ -34,8 +36,10 @@ export class ClientController {
             const pool = await getConnection();
             await pool.request()
                 .input('id', sql.Int, client.id)
-                .input('name', sql.NVarChar(100), client.name)
-                .query('UPDATE Clients SET name = @name, email = @email, phone = @phone WHERE id = @id');
+                .input('name', sql.NVarChar(255), client.name)
+                .input('address', sql.NVarChar(500), client.address)
+                .input('postcode', sql.NVarChar(20), client.postcode || '')
+                .query('UPDATE clients SET name = @name, address = @address, postcode = @postcode WHERE id = @id');
             res.json({ message: 'Client updated successfully' });
         } catch (error) {
             res.status(500).json({ message: 'Error updating client', error });
@@ -45,7 +49,7 @@ export class ClientController {
     async getAllClients(): Promise<Client[]> {
         try {
             const pool = await getConnection();
-            const result = await pool.request().query('SELECT * FROM Clients');
+            const result = await pool.request().query('SELECT * FROM clients');
             return result.recordset;
         } catch (error) {
             throw new Error('Error fetching clients: ' + (error instanceof Error ? error.message : String(error)));

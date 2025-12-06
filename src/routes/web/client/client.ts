@@ -5,10 +5,10 @@ const router = express.Router();
 
 const clientController = new ClientController();
 
-router.get('/client', clientController.index);
-router.post('/client/store', clientController.store);
-router.post('/client/bulk-import', clientController.bulkStore);
-router.patch('/client/update', clientController.update);
+router.get('/client', clientController.index.bind(clientController));
+router.post('/client/store', clientController.store.bind(clientController));
+router.post('/client/bulk-import', clientController.bulkStore.bind(clientController));
+router.patch('/client/update', clientController.update.bind(clientController));
 router.get('/client/get_all', async (req: Request, res: Response) => {
     try {
         const clients = await clientController.getAllClients();

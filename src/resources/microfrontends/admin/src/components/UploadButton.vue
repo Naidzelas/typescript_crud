@@ -158,16 +158,23 @@ const handleUpload = async () => {
 
     try {
         const fileContent = await selectedFile.value.text();
-        const clients = JSON.parse(fileContent);
+        const rawClients = JSON.parse(fileContent);
 
         // Validate that it's an array
-        if (!Array.isArray(clients)) {
+        if (!Array.isArray(rawClients)) {
             console.error('Invalid JSON format: Expected an array of clients');
             return;
         }
 
+        // Normalize field names (support both uppercase and lowercase)
+        const clients = rawClients.map((client: any) => ({
+            name: client.name || client.Name,
+            address: client.address || client.Address,
+            postcode: client.postcode || client.PostCode || ''
+        }));
+
         // Send to backend
-        const response = await fetch('/client/bulk-import', {
+        const response = await fetch('http://localhost:3000/api/client/bulk-import', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
