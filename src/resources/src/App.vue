@@ -222,9 +222,12 @@
                 </div>
             </div>
             <div class="flex flex-col flex-auto p-8">
-                <div class="flex-auto bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl" >
+                <div class="flex justify-end mb-4">
+                    <UploadButton />
+                </div>
+                <div class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl" >
                     <Clients />
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -233,4 +236,5 @@
 <script setup lang="ts">
 import Badge from 'primevue/badge';
 import Clients from 'client/Clients';
+import UploadButton from 'admin/UploadButton';
 </script>
