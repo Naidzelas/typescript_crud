@@ -19,6 +19,11 @@ app.use('/api', webRoutes);
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
+app.use(cors({
+  origin: '*', // Or specify your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Health check
 app.get('/api/health', async (req, res) => {
