@@ -1,37 +1,35 @@
 <template>
     <div class="p-6">
         <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">Clients</h1>
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <table class="w-full border-collapse">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b-2 font-semibold text-gray-600 dark:text-gray-300 text-xs text-left uppercase tracking-wider">ID</th>
-                        <th class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b-2 font-semibold text-gray-600 dark:text-gray-300 text-xs text-left uppercase tracking-wider">Name</th>
-                        <th class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b-2 font-semibold text-gray-600 dark:text-gray-300 text-xs text-left uppercase tracking-wider">Address</th>
-                        <th class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b-2 font-semibold text-gray-600 dark:text-gray-300 text-xs text-left uppercase tracking-wider">Created At</th>
-                        <th class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b-2 font-semibold text-gray-600 dark:text-gray-300 text-xs text-left uppercase tracking-wider">Updated At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr 
-                        v-for="client in clients" 
-                        :key="client.id"
-                        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                        <td class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b text-gray-900 dark:text-gray-100">{{ client.id }}</td>
-                        <td class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b text-gray-900 dark:text-gray-100">{{ client.name }}</td>
-                        <td class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b text-gray-900 dark:text-gray-100">{{ client.address }}</td>
-                        <td class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b text-gray-900 dark:text-gray-100">{{ formatDate(client.created_at) }}</td>
-                        <td class="px-4 py-3 border-gray-200 dark:border-gray-600 border-b text-gray-900 dark:text-gray-100">{{ formatDate(client.updated_at) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <DataTable 
+            :value="clients" 
+            stripedRows 
+            showGridlines 
+            :paginator="true" 
+            :rows="10"
+            tableStyle="min-width: 50rem"
+        >
+            <Column field="id" header="ID" sortable style="width: 10%"></Column>
+            <Column field="name" header="Name" sortable style="width: 25%"></Column>
+            <Column field="address" header="Address" sortable style="width: 30%"></Column>
+            <Column field="created_at" header="Created At" sortable style="width: 17.5%">
+                <template #body="slotProps">
+                    {{ formatDate(slotProps.data.created_at) }}
+                </template>
+            </Column>
+            <Column field="updated_at" header="Updated At" sortable style="width: 17.5%">
+                <template #body="slotProps">
+                    {{ formatDate(slotProps.data.updated_at) }}
+                </template>
+            </Column>
+        </DataTable>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 interface Client {
     id: number;
