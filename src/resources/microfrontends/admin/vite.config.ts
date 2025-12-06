@@ -17,5 +17,19 @@ export default defineConfig({
   ],
   server: {
     port: 5012,
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  },
+  build: {
+    target: 'esnext',
+    minify: false,
+    modulePreload: false,
+    cssCodeSplit: false,
+  },
+  preview: {
+    port: 5012,
+    cors: true,
   },
 });
