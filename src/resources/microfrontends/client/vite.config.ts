@@ -13,7 +13,12 @@ export default defineConfig({
       exposes: {
         './Clients': './src/pages/Clients.vue',
       },
-      shared: ['vue', 'primevue'],
+      shared: {
+        vue: { version: '^3.5.24' },
+        primevue: { version: '^4.5.1' },
+        '@primeuix/themes': { version: '^2.0.2' },
+        'primevue/config': { version: '^4.5.1' },
+      },
     }),
     tailwindcss(),
   ],

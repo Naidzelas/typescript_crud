@@ -13,11 +13,25 @@ export default defineConfig({
         client: 'http://localhost:5010/assets/remoteEntry.js',
         admin: 'http://localhost:5012/assets/remoteEntry.js',
       },
-      shared: ['vue'],
+      shared: {
+        vue: { version: '^3.5.24' },
+        primevue: { version: '^4.5.1' },
+        '@primeuix/themes': { version: '^2.0.2' },
+        'primevue/config': { version: '^4.5.1' },
+      },
     }),
     tailwindcss(),
   ],
   server: {
     port: 5173,
+  },
+  build: {
+    target: 'esnext',
+    minify: false,
+    modulePreload: false,
+    cssCodeSplit: false,
+    rollupOptions: {
+      external: ['quill', 'chart.js', 'chart.js/auto'],
+    },
   },
 });
