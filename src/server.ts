@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import clientsRouter from './routes/clients';
-import postcodeRouter from './routes/postcode';
-import logsRouter from './routes/logs';
 import { config } from './config';
+import webRoutes from './routes/web';
 
 const app = express();
 
@@ -14,9 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // API Routes
-app.use('/api/clients', clientsRouter);
-app.use('/api/postcode', postcodeRouter);
-app.use('/api/logs', logsRouter);
+app.use('/api', webRoutes);
 
 // Serve frontend
 app.get('/', (req, res) => {
