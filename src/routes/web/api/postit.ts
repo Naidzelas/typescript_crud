@@ -2,13 +2,13 @@ import express, { Request, Response } from 'express';
 import { PostitService } from '../../../services/postitService';
 
 const router = express.Router();
-const postitService = new PostitService();
 
 /**
  * Health check endpoint to verify Postit API connectivity
  */
 router.get('/postit/health', async (req: Request, res: Response) => {
   try {
+    const postitService = new PostitService();
     const result = await postitService.healthCheck();
     res.status(result.success ? 200 : 503).json(result);
   } catch (error) {
@@ -26,6 +26,7 @@ router.get('/postit/health', async (req: Request, res: Response) => {
  */
 router.post('/update-postcodes', async (req: Request, res: Response) => {
   try {
+    const postitService = new PostitService();
     const result = await postitService.updateAllPostCodes();
     res.json(result);
   } catch (error) {
