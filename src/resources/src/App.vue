@@ -73,31 +73,16 @@
       <div
         class="lg:static relative flex justify-between items-center bg-surface-0 dark:bg-surface-900 px-8 py-4 border-surface-200 dark:border-surface-700 border-b"
       >
-        <div class="flex items-center">
-          <a
-            v-styleclass="{
-              selector: '#app-sidebar-colored',
-              enterFromClass: 'hidden',
-              enterActiveClass: 'animate-fadeinleft',
-              leaveToClass: 'hidden',
-              leaveActiveClass: 'animate-fadeoutleft',
-              hideOnOutsideClick: true,
-              resizeSelector: '.resize-container-2',
-              hideOnResize: true,
-            }"
-            class="lg:hidden block mr-4 text-surface-700 dark:text-surface-100 cursor-pointer"
-          >
-            <i class="text-xl! pi pi-bars" />
-          </a>
-        </div>
+        
         <div class="flex items-center gap-8 h-8"></div>
       </div>
       <div class="flex flex-col flex-auto p-8">
-        <div class="flex justify-end mb-4">
+        <div class="flex justify-end gap-4 mb-4">
           <UploadButton />
         </div>
+        <UpdatePostcodes />
         <div
-          class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl"
+        class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl"
         >
           <Clients />
         </div>
@@ -109,4 +94,5 @@
 <script setup lang="ts">
 import Clients from "client/Clients";
 import UploadButton from "admin/UploadButton";
+import UpdatePostcodes from "admin/UpdatePostcodes";
 </script>

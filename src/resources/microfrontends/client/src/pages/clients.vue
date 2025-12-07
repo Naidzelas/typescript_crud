@@ -2,7 +2,29 @@
     <div class="p-6">
         <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">Clients</h1>
         
-        <div class="shadow-md rounded-lg overflow-x-auto">
+        <!-- Loading State -->
+        <div v-if="loading" class="flex justify-center items-center py-12">
+            <div class="border-4 border-gray-200 border-t-blue-600 rounded-full w-12 h-12 animate-spin"></div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="bg-red-50 dark:bg-red-900/20 px-4 py-3 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-800 dark:text-red-200">{{ error }}</p>
+            <button 
+                @click="fetchClients" 
+                class="bg-red-600 hover:bg-red-700 mt-2 px-4 py-2 rounded text-white"
+            >
+                Retry
+            </button>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="clients.length === 0" class="bg-gray-50 dark:bg-gray-800 px-4 py-12 rounded-lg text-center">
+            <p class="text-gray-600 dark:text-gray-400">No clients found</p>
+        </div>
+
+        <!-- Data Table -->
+        <div v-else class="shadow-md rounded-lg overflow-x-auto">
             <table class="divide-y divide-gray-200 dark:divide-gray-700 min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
@@ -109,44 +131,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 interface Client {
     id: number;
     name: string;
     address: string;
+    postcode: string;
     created_at: Date;
     updated_at: Date;
 }
 
-const clients = ref<Client[]>([
-    { 
-        id: 1, 
-        name: 'Acme Corporation', 
-        address: '123 Main St, New York, NY',
-        created_at: new Date('2024-01-15'),
-        updated_at: new Date('2024-12-01')
-    },
-    { 
-        id: 2, 
-        name: 'Tech Solutions Ltd', 
-        address: '456 Tech Ave, San Francisco, CA',
-        created_at: new Date('2024-03-20'),
-        updated_at: new Date('2024-11-28')
-    },
-    { 
-        id: 3, 
-        name: 'Global Industries', 
-        address: '789 Business Blvd, Chicago, IL',
-        created_at: new Date('2024-06-10'),
-        updated_at: new Date('2024-12-05')
-    },
-]);
+const clients = ref<Client[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
 const currentPage = ref(1);
 const rowsPerPage = 10;
 const sortField = ref<keyof Client | null>(null);
 const sortOrder = ref<1 | -1>(1);
+
+const fetchClients = async () => {
+    try {
+        loading.value = true;
+        error.value = null;
+        const response = await fetch('http://localhost:3000/api/client/get_all');
+        if (!response.ok) {
+            throw new Error('Failed to fetch clients');
+        }
+        const data = await response.json();
+        clients.value = data;
+    } catch (err) {
+        error.value = err instanceof Error ? err.message : 'An error occurred';
+        console.error('Error fetching clients:', err);
+    } finally {
+        loading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchClients();
+});
 
 const sortBy = (field: keyof Client) => {
     if (sortField.value === field) {

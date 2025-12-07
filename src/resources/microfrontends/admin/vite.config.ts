@@ -12,6 +12,7 @@ export default defineConfig({
       filename: 'remoteEntry.js',
       exposes: {
         './UploadButton': './src/components/UploadButton.vue',
+        './UpdatePostcodes': './src/components/UpdatePostcodes.vue',
       },
       shared: {
         vue: { version: '^3.5.24' },
