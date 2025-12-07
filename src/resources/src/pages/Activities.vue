@@ -59,8 +59,8 @@
                 <Column field="payload" header="Details" style="min-width: 300px">
                     <template #body="{ data }">
                         <div class="text-sm">
-                            <div v-if="data.payload.name" class="font-semibold">{{ data.payload.name }}</div>
-                            <div class="text-gray-600 dark:text-gray-400">{{ data.payload.message }}</div>
+                            <div v-if="getPayload(data.payload).name" class="font-semibold">{{ getPayload(data.payload).name }}</div>
+                            <div class="text-gray-600 dark:text-gray-400">{{ getPayload(data.payload).message }}</div>
                         </div>
                     </template>
                 </Column>
@@ -229,14 +229,26 @@ onMounted(() => {
 });
 
 const formatDate = (date: Date) => {
-    return new Date(date).toLocaleString('en-US', {
+    return new Date(date).toLocaleString('lt-LT', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
+        timeZone: 'Europe/Vilnius'
     });
+};
+
+const getPayload = (payload: any) => {
+    if (typeof payload === 'string') {
+        try {
+            return JSON.parse(payload);
+        } catch {
+            return { message: payload };
+        }
+    }
+    return payload || {};
 };
 
 const getActionSeverity = (action: string) => {
