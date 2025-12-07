@@ -5,8 +5,10 @@ import sql from 'mssql';
 export class LogService {
   async createLog(log: AppActivityLog): Promise<void> {
     try {
+      console.log('[LogService] Creating log:', { code: log.code, action: log.action });
+      
       const pool = await getConnection();
-      await pool
+      const result = await pool
         .request()
         .input('code', sql.Int, log.code)
         .input('action', sql.NVarChar(255), log.action)
@@ -15,8 +17,11 @@ export class LogService {
           INSERT INTO app_activity_log (code, action, payload)
           VALUES (@code, @action, @payload)
         `);
+      
+      console.log('[LogService] Log created successfully, rows affected:', result.rowsAffected);
     } catch (error) {
-      console.error('Error creating log:', error);
+      console.error('[LogService] Error creating activity log:', error);
+      throw error;
     }
   }
 

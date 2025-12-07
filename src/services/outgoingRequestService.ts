@@ -5,8 +5,14 @@ import sql from 'mssql';
 export class OutgoingRequestService {
   async logRequest(request: OutgoingRequest): Promise<void> {
     try {
+      console.log('[OutgoingRequestService] Logging request:', { 
+        endpoint: request.endpoint, 
+        method: request.method, 
+        code: request.code 
+      });
+      
       const pool = await getConnection();
-      await pool
+      const result = await pool
         .request()
         .input('endpoint', sql.NVarChar(255), request.endpoint)
         .input('method', sql.NVarChar(10), request.method)
@@ -16,8 +22,11 @@ export class OutgoingRequestService {
           INSERT INTO outgoing_requests (endpoint, method, payload, code)
           VALUES (@endpoint, @method, @payload, @code)
         `);
+      
+      console.log('[OutgoingRequestService] Request logged successfully, rows affected:', result.rowsAffected);
     } catch (error) {
-      console.error('Error logging outgoing request:', error);
+      console.error('[OutgoingRequestService] Error logging outgoing request:', error);
+      throw error;
     }
   }
 

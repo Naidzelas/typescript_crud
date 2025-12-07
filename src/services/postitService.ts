@@ -34,17 +34,27 @@ export class PostitService {
    * Check if the Postit API is accessible and responding
    */
   async healthCheck(): Promise<{ success: boolean; message: string }> {
+    const outgoingRequestService = new OutgoingRequestService();
+    
     try {
-      const response = await axios.get<PostitApiResponse>(
-        'https://api.postit.lt/v2/',
-        {
-          params: {
-            city: 'Vilnius',
-            key: config.postit.apiKey
-          },
-          timeout: 5000
-        }
-      );
+      const endpoint = 'https://api.postit.lt/v2/';
+      const params = {
+        city: 'Vilnius',
+        key: config.postit.apiKey
+      };
+      
+      const response = await axios.get<PostitApiResponse>(endpoint, {
+        params,
+        timeout: 5000
+      });
+
+      // Log the request
+      await outgoingRequestService.logRequest({
+        endpoint,
+        method: 'GET',
+        payload: params,
+        code: response.status
+      });
 
       if (response.data.success) {
         return { 
@@ -59,6 +69,14 @@ export class PostitService {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        // Log failed request
+        await outgoingRequestService.logRequest({
+          endpoint: 'https://api.postit.lt/v2/',
+          method: 'GET',
+          payload: { city: 'Vilnius' },
+          code: error.response?.status || 500
+        });
+        
         return { 
           success: false, 
           message: `Cannot connect to Postit API: ${error.message}` 
