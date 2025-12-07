@@ -48,11 +48,11 @@ export class PostitService {
         timeout: 5000
       });
 
-      // Log the request
+      // Log the request (without API key)
       await outgoingRequestService.logRequest({
         endpoint,
         method: 'GET',
-        payload: params,
+        payload: { city: params.city },
         code: response.status
       });
 
@@ -187,11 +187,11 @@ export class PostitService {
           
           postitResponse = await axios.get<PostitApiResponse>(endpoint, { params, timeout: 10000 });
           
-          // Log the request
+          // Log the request (without API key)
           await outgoingRequestService.logRequest({
             endpoint,
             method: 'GET',
-            payload: params,
+            payload: { address: params.address, city: params.city },
             code: postitResponse.status
           });
         } catch (err) {
@@ -207,11 +207,11 @@ export class PostitService {
         
         postitResponse = await axios.get<PostitApiResponse>(endpoint, { params, timeout: 10000 });
         
-        // Log the request
+        // Log the request (without API key)
         await outgoingRequestService.logRequest({
           endpoint,
           method: 'GET',
-          payload: params,
+          payload: { address: params.address },
           code: postitResponse.status
         });
       }
