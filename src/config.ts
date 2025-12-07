@@ -15,7 +15,6 @@ export const config = {
       enableArithAbort: true,
       connectTimeout: 30000,
       requestTimeout: 30000,
-      instanceName: 'SQLEXPRESS',
     },
   },
   postit: {
