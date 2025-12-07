@@ -50,6 +50,13 @@
                             <span v-if="sortField === 'address'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
+                            @click="sortBy('postcode')" 
+                            class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
+                        >
+                            Postcode
+                            <span v-if="sortField === 'postcode'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
+                        </th>
+                        <th 
                             @click="sortBy('created_at')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
@@ -80,6 +87,9 @@
                         </td>
                         <td class="px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">
                             {{ client.address }}
+                        </td>
+                        <td class="px-6 py-4 text-gray-900 dark:text-gray-100 text-sm whitespace-nowrap">
+                            {{ client.postcode || '-' }}
                         </td>
                         <td class="px-6 py-4 text-gray-900 dark:text-gray-100 text-sm whitespace-nowrap">
                             {{ formatDate(client.created_at) }}

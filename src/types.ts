@@ -20,10 +20,10 @@ export interface AppActivityLog {
 }
 
 export interface OutgoingRequest {
-    id: number;
+    id?: number;
     endpoint: string;
     method: string;
     payload: any;
     code: number;
-    created_at: Date;
+    created_at?: Date;
 }

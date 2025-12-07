@@ -13,6 +13,7 @@ export default defineConfig({
       exposes: {
         './UploadButton': './src/components/UploadButton.vue',
         './UpdatePostcodes': './src/components/UpdatePostcodes.vue',
+        './ActivityLogs': './src/components/ActivityLogs.vue',
       },
       shared: {
         vue: { version: '^3.5.24' },

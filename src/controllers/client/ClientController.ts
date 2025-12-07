@@ -1,6 +1,7 @@
 import { Client } from "../../types";
 import sql from 'mssql';
 import { getConnection } from "../../database";
+import { LogService } from "../../services/logService";
 
 export class ClientController {
 
@@ -17,6 +18,8 @@ export class ClientController {
 
     async store(req: any, res: any): Promise<void> {
         const client: Client = req.body;
+        const logService = new LogService();
+        
         try {
             const pool = await getConnection();
             await pool.request()
@@ -24,14 +27,34 @@ export class ClientController {
                 .input('address', sql.NVarChar(500), client.address)
                 .input('postcode', sql.NVarChar(20), client.postcode || '')
                 .query('INSERT INTO clients (name, address, postcode) VALUES (@name, @address, @postcode)');
+            
+            await logService.createLog({
+                code: 201,
+                action: 'CLIENT_CREATED',
+                payload: {
+                    name: client.name,
+                    message: `Client created: ${client.name} at ${client.address}`
+                }
+            });
+            
             res.status(201).json({ message: 'Client created successfully' });
         } catch (error) {
+            await logService.createLog({
+                code: 500,
+                action: 'CLIENT_CREATE_ERROR',
+                payload: {
+                    name: client.name || 'Unknown',
+                    message: `Failed to create client: ${error instanceof Error ? error.message : String(error)}`
+                }
+            });
             res.status(500).json({ message: 'Error creating client', error });
         }
     }
 
     async update(req: any, res: any): Promise<void> {
         const client: Client = req.body;
+        const logService = new LogService();
+        
         try {
             const pool = await getConnection();
             await pool.request()
@@ -40,8 +63,26 @@ export class ClientController {
                 .input('address', sql.NVarChar(500), client.address)
                 .input('postcode', sql.NVarChar(20), client.postcode || '')
                 .query('UPDATE clients SET name = @name, address = @address, postcode = @postcode WHERE id = @id');
+            
+            await logService.createLog({
+                code: 200,
+                action: 'CLIENT_UPDATED',
+                payload: {
+                    name: client.name,
+                    message: `Client updated: ${client.name} (ID: ${client.id})`
+                }
+            });
+            
             res.json({ message: 'Client updated successfully' });
         } catch (error) {
+            await logService.createLog({
+                code: 500,
+                action: 'CLIENT_UPDATE_ERROR',
+                payload: {
+                    name: client.name || 'Unknown',
+                    message: `Failed to update client: ${error instanceof Error ? error.message : String(error)}`
+                }
+            });
             res.status(500).json({ message: 'Error updating client', error });
         }
     }

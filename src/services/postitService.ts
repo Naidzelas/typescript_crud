@@ -2,6 +2,7 @@ import axios from 'axios';
 import { config } from '../config';
 import { getConnection } from '../database';
 import sql from 'mssql';
+import { OutgoingRequestService } from './outgoingRequestService';
 
 interface PostitApiResponse {
   status: string;
@@ -149,6 +150,8 @@ export class PostitService {
    * Get postcode by full address using Postit v2 API
    */
   async getPostCodeByAddress(address: string): Promise<string | null> {
+    const outgoingRequestService = new OutgoingRequestService();
+    
     try {
       // Parse address to separate street and city
       // Format: "Street address, City" or just "Street address"
@@ -161,17 +164,18 @@ export class PostitService {
       // Try with separate city and address parameters if city is available
       if (city) {
         try {
-          postitResponse = await axios.get<PostitApiResponse>(
-            'https://api.postit.lt/v2/',
-            {
-              params: {
-                address: streetAddress,
-                city: city,
-                key: config.postit.apiKey
-              },
-              timeout: 10000
-            }
-          );
+          const endpoint = 'https://api.postit.lt/v2/';
+          const params = { address: streetAddress, city: city, key: config.postit.apiKey };
+          
+          postitResponse = await axios.get<PostitApiResponse>(endpoint, { params, timeout: 10000 });
+          
+          // Log the request
+          await outgoingRequestService.logRequest({
+            endpoint,
+            method: 'GET',
+            payload: params,
+            code: postitResponse.status
+          });
         } catch (err) {
           // If separated query fails, try with full address
           postitResponse = null;
@@ -180,16 +184,18 @@ export class PostitService {
       
       // If no result yet, try with full address as fallback
       if (!postitResponse || !postitResponse.data.success || !postitResponse.data.data || postitResponse.data.data.length === 0) {
-        postitResponse = await axios.get<PostitApiResponse>(
-          'https://api.postit.lt/v2/',
-          {
-            params: {
-              address: address,
-              key: config.postit.apiKey
-            },
-            timeout: 10000
-          }
-        );
+        const endpoint = 'https://api.postit.lt/v2/';
+        const params = { address: address, key: config.postit.apiKey };
+        
+        postitResponse = await axios.get<PostitApiResponse>(endpoint, { params, timeout: 10000 });
+        
+        // Log the request
+        await outgoingRequestService.logRequest({
+          endpoint,
+          method: 'GET',
+          payload: params,
+          code: postitResponse.status
+        });
       }
 
       if (postitResponse.data.success && postitResponse.data.data && postitResponse.data.data.length > 0) {
@@ -199,6 +205,13 @@ export class PostitService {
       return null;
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        // Log failed request
+        await outgoingRequestService.logRequest({
+          endpoint: 'https://api.postit.lt/v2/',
+          method: 'GET',
+          payload: { address },
+          code: error.response?.status || 500
+        });
         throw new Error(`Postit API error: ${error.response?.data?.message || error.message}`);
       }
       throw error;

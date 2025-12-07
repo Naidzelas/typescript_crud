@@ -38,7 +38,9 @@
               <ul class="flex flex-col gap-1 m-0 overflow-hidden list-none">
                 <li>
                   <a
+                    @click="currentPage = 'clients'"
                     class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
+                    :class="{ 'bg-primary-emphasis': currentPage === 'clients' }"
                   >
                     <i
                       class="text-base! text-primary-contrast leading-none! pi pi-home"
@@ -50,7 +52,9 @@
                 </li>
                 <li>
                   <a
+                    @click="currentPage = 'activities'"
                     class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
+                    :class="{ 'bg-primary-emphasis': currentPage === 'activities' }"
                   >
                     <i
                       class="text-base! text-primary-contrast leading-none! pi pi-bookmark"
@@ -75,15 +79,21 @@
       ></div>
       <ScrollPanel class="h-[90%]">
         <div class="flex flex-col p-8">
-          <div class="flex justify-end gap-4 mb-4">
-            <UploadButton />
-          </div>
-          <UpdatePostcodes />
-          <div
-            class="bg-surface-50 dark:bg-surface-800"
-          >
-            <Clients />
-          </div>
+          <!-- Clients Page -->
+          <template v-if="currentPage === 'clients'">
+            <div class="flex justify-end gap-4 mb-4">
+              <UploadButton />
+            </div>
+            <UpdatePostcodes />
+            <div class="bg-surface-50 dark:bg-surface-800">
+              <Clients />
+            </div>
+          </template>
+
+          <!-- Activities Page -->
+          <template v-else-if="currentPage === 'activities'">
+            <Activities />
+          </template>
         </div>
       </ScrollPanel>
     </div>
@@ -91,8 +101,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import Clients from "client/Clients";
 import UploadButton from "admin/UploadButton";
 import UpdatePostcodes from "admin/UpdatePostcodes";
+import Activities from "./pages/Activities.vue";
 import ScrollPanel from "primevue/scrollpanel";
+
+const currentPage = ref<'clients' | 'activities'>('clients');
 </script>
