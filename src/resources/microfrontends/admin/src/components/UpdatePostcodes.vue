@@ -126,6 +126,17 @@ const updatePostcodes = async () => {
     updateResult.value = null;
 
     try {
+        // First check API health
+        const healthResponse = await fetch('http://localhost:3000/api/postit/health');
+        const healthData = await healthResponse.json() as { success: boolean; message: string };
+        
+        if (!healthData.success) {
+            errorMessage.value = `API Health Check Failed: ${healthData.message}`;
+            isUpdating.value = false;
+            return;
+        }
+
+        // Proceed with update
         const response = await fetch('http://localhost:3000/api/update-postcodes', {
             method: 'POST',
             headers: {

@@ -1,128 +1,205 @@
 import axios from 'axios';
 import { config } from '../config';
-import { OutgoingRequest } from '../types';
-import { LogService } from './logService';
-import { ClientController } from '../controllers/client/ClientController';
+import { getConnection } from '../database';
+import sql from 'mssql';
 
-interface PostitResponse {
+interface PostitApiResponse {
   status: string;
-  data?: {
-    postcode?: string;
-  };
-  error?: string;
+  success: boolean;
+  message: string;
+  message_code: number;
+  total: number;
+  data: Array<{
+    post_code: string;
+    address: string;
+    street: string;
+    number: string;
+    city: string;
+    municipality: string;
+  }>;
+}
+
+interface UpdateResult {
+  success: boolean;
+  message: string;
+  updated: number;
+  failed: number;
+  total: number;
+  errors?: string[];
 }
 
 export class PostitService {
-  private client: ClientController;
-  private logService: LogService;
-
-  constructor() {
-    this.client = new ClientController();
-    this.logService = new LogService();
-  }
-
-  async updateAllPostCodes(): Promise<{ updated: number; failed: number }> {
-    let updated = 0;
-    let failed = 0;
-
+  /**
+   * Check if the Postit API is accessible and responding
+   */
+  async healthCheck(): Promise<{ success: boolean; message: string }> {
     try {
-      const clients = await this.client.getAllClients();
-
-      await this.logService.createLog({
-        code: 200,
-        action: 'POSTCODE_UPDATE_STARTED',
-        payload: {
-          name: 'System',
-          message: `Started updating post codes for ${clients.length} clients`
-        }
-      });
-
-      for (const clientData of clients) {
-        try {
-          const postCode = await this.getPostCodeByAddress(clientData.address);
-          
-          if (postCode) {
-            // Note: ClientController.update expects (req, res) - needs refactoring for direct use
-            // For now, this is a placeholder showing the correct property names
-            updated++;
-            await this.logService.createLog({
-              code: 200,
-              action: 'POSTCODE_UPDATED',
-              payload: {
-                name: clientData.name,
-                message: `Post code updated to ${postCode}`
-              }
-            });
-          } else {
-            failed++;
-            await this.logService.createLog({
-              code: 404,
-              action: 'POSTCODE_NOT_FOUND',
-              payload: {
-                name: clientData.name,
-                message: `Post code not found for address: ${clientData.address}`
-              }
-            });
-          }
-        } catch (error) {
-          failed++;
-          await this.logService.createLog({
-            code: 500,
-            action: 'POSTCODE_UPDATE_ERROR',
-            payload: {
-              name: clientData.name,
-              message: `Failed to update post code: ${error instanceof Error ? error.message : String(error)}`
-            }
-          });
-        }
-      }
-
-      await this.logService.createLog({
-        code: 200,
-        action: 'POSTCODE_UPDATE_COMPLETED',
-        payload: {
-          name: 'System',
-          message: `Post code update completed. Updated: ${updated}, Failed: ${failed}`
-        }
-      });
-
-      return { updated, failed };
-    } catch (error) {
-      await this.logService.createLog({
-        code: 500,
-        action: 'POSTCODE_UPDATE_FAILED',
-        payload: {
-          name: 'System',
-          message: 'Post code update process failed'
-        }
-      });
-      throw error;
-    }
-  }
-
-  async getPostCodeByAddress(address: string): Promise<string | null> {
-    try {
-      const response = await axios.get<PostitResponse>(
-        `${config.postit.apiUrl}postcode`,
+      const response = await axios.get<PostitApiResponse>(
+        'https://api.postit.lt/v2/',
         {
           params: {
-            address: address,
+            city: 'Vilnius',
+            key: config.postit.apiKey
           },
-          headers: {
-            'Authorization': `Bearer ${config.postit.apiKey}`,
-            'Content-Type': 'application/json',
-          },
+          timeout: 5000
         }
       );
 
-      if (response.data.status === 'success' && response.data.data?.postcode) {
-        return response.data.data.postcode;
+      if (response.data.success) {
+        return { 
+          success: true, 
+          message: 'Postit API is accessible and responding correctly' 
+        };
+      } else {
+        return { 
+          success: false, 
+          message: `API responded but returned error: ${response.data.message}` 
+        };
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return { 
+          success: false, 
+          message: `Cannot connect to Postit API: ${error.message}` 
+        };
+      }
+      return { 
+        success: false, 
+        message: `Unknown error: ${error instanceof Error ? error.message : String(error)}` 
+      };
+    }
+  }
+
+  /**
+   * Update postcodes for all clients without postcodes
+   */
+  async updateAllPostCodes(): Promise<UpdateResult> {
+    try {
+      const pool = await getConnection();
+      
+      // Get all clients without postcodes or with empty postcodes
+      const clientsResult = await pool.request()
+        .query(`SELECT id, name, address, postcode FROM clients WHERE postcode IS NULL OR postcode = ''`);
+      
+      const clients = clientsResult.recordset;
+      
+      if (clients.length === 0) {
+        return {
+          success: true,
+          message: 'All clients already have postcodes',
+          updated: 0,
+          failed: 0,
+          total: 0,
+          errors: []
+        };
+      }
+
+      let updated = 0;
+      let failed = 0;
+      const errors: string[] = [];
+
+      for (const client of clients) {
+        try {
+          const postcode = await this.getPostCodeByAddress(client.address);
+          
+          if (postcode) {
+            // Update client with the postcode
+            await pool.request()
+              .input('id', sql.Int, client.id)
+              .input('postcode', sql.NVarChar(20), postcode)
+              .query('UPDATE clients SET postcode = @postcode WHERE id = @id');
+            
+            updated++;
+          } else {
+            failed++;
+            errors.push(`Client ${client.name}: No postcode found for address "${client.address}"`);
+          }
+        } catch (error) {
+          failed++;
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          errors.push(`Client ${client.name}: ${errorMsg}`);
+        }
+
+        // Add small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      return {
+        success: true,
+        message: `Postcode update completed. Updated: ${updated}, Failed: ${failed}`,
+        updated,
+        failed,
+        total: clients.length,
+        errors: errors.length > 0 ? errors : undefined
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      return {
+        success: false,
+        message: 'Failed to update postcodes',
+        updated: 0,
+        failed: 0,
+        total: 0,
+        errors: [errorMsg]
+      };
+    }
+  }
+
+  /**
+   * Get postcode by full address using Postit v2 API
+   */
+  async getPostCodeByAddress(address: string): Promise<string | null> {
+    try {
+      // Parse address to separate street and city
+      // Format: "Street address, City" or just "Street address"
+      const addressParts = address.split(',').map((part: string) => part.trim());
+      const streetAddress = addressParts[0];
+      const city = addressParts.length > 1 ? addressParts[addressParts.length - 1] : undefined;
+      
+      let postitResponse: any = null;
+      
+      // Try with separate city and address parameters if city is available
+      if (city) {
+        try {
+          postitResponse = await axios.get<PostitApiResponse>(
+            'https://api.postit.lt/v2/',
+            {
+              params: {
+                address: streetAddress,
+                city: city,
+                key: config.postit.apiKey
+              },
+              timeout: 10000
+            }
+          );
+        } catch (err) {
+          // If separated query fails, try with full address
+          postitResponse = null;
+        }
+      }
+      
+      // If no result yet, try with full address as fallback
+      if (!postitResponse || !postitResponse.data.success || !postitResponse.data.data || postitResponse.data.data.length === 0) {
+        postitResponse = await axios.get<PostitApiResponse>(
+          'https://api.postit.lt/v2/',
+          {
+            params: {
+              address: address,
+              key: config.postit.apiKey
+            },
+            timeout: 10000
+          }
+        );
+      }
+
+      if (postitResponse.data.success && postitResponse.data.data && postitResponse.data.data.length > 0) {
+        return postitResponse.data.data[0].post_code;
       }
 
       return null;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(`Postit API error: ${error.response?.data?.error || error.message}`);
+        throw new Error(`Postit API error: ${error.response?.data?.message || error.message}`);
       }
       throw error;
     }
