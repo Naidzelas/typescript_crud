@@ -80,7 +80,7 @@
           </div>
           <UpdatePostcodes />
           <div
-            class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl"
+            class="bg-surface-50 dark:bg-surface-800"
           >
             <Clients />
           </div>
