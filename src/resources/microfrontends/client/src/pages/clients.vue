@@ -233,4 +233,9 @@ const formatDate = (date: Date) => {
         second: '2-digit'
     });
 };
+
+// Expose refresh method to parent component
+defineExpose({
+    refresh: fetchClients
+});
 </script>

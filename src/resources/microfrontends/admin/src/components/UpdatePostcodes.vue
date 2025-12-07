@@ -105,6 +105,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const emit = defineEmits<{
+    updateComplete: [result: { updated: number; failed: number; total: number }]
+}>();
+
 interface UpdateResult {
     success: boolean;
     message: string;
@@ -149,6 +153,7 @@ const updatePostcodes = async () => {
         if (data.success) {
             successMessage.value = data.message;
             updateResult.value = data;
+            emit('updateComplete', { updated: data.updated, failed: data.failed, total: data.total });
         } else {
             errorMessage.value = data.message || 'Failed to update postcodes';
         }

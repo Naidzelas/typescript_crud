@@ -119,6 +119,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const emit = defineEmits<{
+    uploadComplete: [result: { inserted: number; skipped: number }]
+}>();
+
 const visible = ref(false);
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<any>(null);
@@ -187,6 +191,7 @@ const handleUpload = async () => {
         if (response.ok) {
             console.log('Upload successful:', result);
             console.log(`Import completed! Inserted: ${result.inserted}, Skipped (duplicates): ${result.skipped}`);
+            emit('uploadComplete', { inserted: result.inserted, skipped: result.skipped });
             closeDialog();
         } else {
             console.error('Upload failed:', result);

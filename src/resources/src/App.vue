@@ -82,11 +82,11 @@
           <!-- Clients Page -->
           <template v-if="currentPage === 'clients'">
             <div class="flex justify-end gap-4 mb-4">
-              <UploadButton />
+              <UploadButton @upload-complete="handleUploadComplete" />
             </div>
-            <UpdatePostcodes />
+            <UpdatePostcodes @update-complete="handleUpdateComplete" />
             <div class="bg-surface-50 dark:bg-surface-800">
-              <Clients />
+              <Clients ref="clientsRef" />
             </div>
           </template>
 
@@ -109,4 +109,13 @@ import Activities from "./pages/Activities.vue";
 import ScrollPanel from "primevue/scrollpanel";
 
 const currentPage = ref<'clients' | 'activities'>('clients');
+const clientsRef = ref<InstanceType<typeof Clients> | null>(null);
+
+const handleUploadComplete = () => {
+    clientsRef.value?.refresh();
+};
+
+const handleUpdateComplete = () => {
+    clientsRef.value?.refresh();
+};
 </script>
