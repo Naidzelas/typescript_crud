@@ -33,7 +33,7 @@ BEGIN
         [code] INT NOT NULL,
         [action] NVARCHAR(255) NOT NULL,
         [payload] JSON NOT NULL,
-        [created_at] DATETIME2 DEFAULT GETDATE(),
+        [created_at] DATETIME2 DEFAULT GETDATE()
     );
 END
 GO

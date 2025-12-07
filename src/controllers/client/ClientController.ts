@@ -99,8 +99,14 @@ export class ClientController {
 
     async bulkStore(req: any, res: any): Promise<void> {
         const clients: Client[] = req.body.clients;
+        const logService = new LogService();
         
         if (!Array.isArray(clients)) {
+            await logService.createLog({
+                code: 400,
+                action: 'BULK_IMPORT_ERROR',
+                payload: { name: 'System', message: 'Invalid data format for bulk import' }
+            });
             res.status(400).json({ message: 'Invalid data format. Expected an array of clients.' });
             return;
         }
@@ -138,6 +144,15 @@ export class ClientController {
                 }
             }
 
+            await logService.createLog({
+                code: 201,
+                action: 'BULK_IMPORT_COMPLETED',
+                payload: {
+                    name: 'System',
+                    message: `Bulk import completed. Inserted: ${inserted}, Skipped: ${skipped}, Errors: ${errors.length}`
+                }
+            });
+
             res.status(201).json({ 
                 message: 'Bulk import completed',
                 inserted,
@@ -145,6 +160,14 @@ export class ClientController {
                 errors: errors.length > 0 ? errors : undefined
             });
         } catch (error) {
+            await logService.createLog({
+                code: 500,
+                action: 'BULK_IMPORT_ERROR',
+                payload: {
+                    name: 'System',
+                    message: `Bulk import failed: ${error instanceof Error ? error.message : String(error)}`
+                }
+            });
             res.status(500).json({ message: 'Error during bulk import', error });
         }
     }
