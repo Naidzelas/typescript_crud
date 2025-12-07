@@ -21,7 +21,7 @@
         >
             <div 
                 v-if="visible"
-                class="z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 p-4"
+                class="z-50 fixed inset-0 flex justify-center items-center bg-black/30 p-4"
                 @click.self="closeDialog"
             >
                 <!-- Modal Dialog -->
