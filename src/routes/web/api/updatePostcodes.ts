@@ -48,14 +48,31 @@ router.post('/update-postcodes', async (req: Request, res: Response) => {
 
     for (const client of clients) {
       try {
+        // Parse address to separate street and city
+        // Format: "Street address, City" or just "Street address"
+        const addressParts = client.address.split(',').map((part: string) => part.trim());
+        const streetAddress = addressParts[0];
+        const city = addressParts.length > 1 ? addressParts[addressParts.length - 1] : undefined;
+        
+        // Build API params
+        const apiParams: any = {
+          key: config.postit.apiKey
+        };
+        
+        if (city) {
+          // If we have a city, use separate parameters for better accuracy
+          apiParams.address = streetAddress;
+          apiParams.city = city;
+        } else {
+          // If no city, just use the full address
+          apiParams.address = client.address;
+        }
+        
         // Call Postit API to get postcode
         const postitResponse = await axios.get<PostitApiResponse>(
           'https://api.postit.lt/v2/',
           {
-            params: {
-              address: client.address,
-              key: config.postit.apiKey
-            },
+            params: apiParams,
             timeout: 10000
           }
         );

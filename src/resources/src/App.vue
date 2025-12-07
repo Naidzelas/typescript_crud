@@ -6,7 +6,7 @@
       id="app-sidebar-colored"
       class="hidden lg:block top-0 left-0 z-10 lg:static absolute bg-[#023f87] w-[280px] h-screen select-none shrink-0"
     >
-      <div class="flex flex-col h-full">
+      <div class="flex flex-col h-screen">
         <div class="flex justify-center gap-4 p-4 w-full">
           <img
             src="/logo.png"
@@ -69,24 +69,23 @@
         </div>
       </div>
     </div>
-    <div class="relative flex flex-col flex-auto min-h-screen">
+    <div class="relative flex flex-col flex-auto max-h-screen">
       <div
         class="lg:static relative flex justify-between items-center bg-surface-0 dark:bg-surface-900 px-8 py-4 border-surface-200 dark:border-surface-700 border-b"
-      >
-        
-        <div class="flex items-center gap-8 h-8"></div>
-      </div>
-      <div class="flex flex-col flex-auto p-8">
-        <div class="flex justify-end gap-4 mb-4">
-          <UploadButton />
+      ></div>
+      <ScrollPanel class="h-[90%]">
+        <div class="flex flex-col p-8">
+          <div class="flex justify-end gap-4 mb-4">
+            <UploadButton />
+          </div>
+          <UpdatePostcodes />
+          <div
+            class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl"
+          >
+            <Clients />
+          </div>
         </div>
-        <UpdatePostcodes />
-        <div
-        class="bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 border-dashed rounded-2xl"
-        >
-          <Clients />
-        </div>
-      </div>
+      </ScrollPanel>
     </div>
   </div>
 </template>
@@ -95,4 +94,5 @@
 import Clients from "client/Clients";
 import UploadButton from "admin/UploadButton";
 import UpdatePostcodes from "admin/UpdatePostcodes";
+import ScrollPanel from "primevue/scrollpanel";
 </script>
