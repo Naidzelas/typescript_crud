@@ -1,6 +1,6 @@
 <template>
     <div class="p-6">
-        <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">Clients</h1>
+        <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">{{ $t('clients.title') }}</h1>
         
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center py-12">
@@ -14,13 +14,13 @@
                 @click="fetchClients" 
                 class="bg-red-600 hover:bg-red-700 mt-2 px-4 py-2 rounded text-white"
             >
-                Retry
+                {{ $t('clients.retry') }}
             </button>
         </div>
 
         <!-- Empty State -->
         <div v-else-if="clients.length === 0" class="bg-gray-50 dark:bg-gray-800 px-4 py-12 rounded-lg text-center">
-            <p class="text-gray-600 dark:text-gray-400">No clients found</p>
+            <p class="text-gray-600 dark:text-gray-400">{{ $t('clients.noClients') }}</p>
         </div>
 
         <!-- Data Table -->
@@ -32,42 +32,42 @@
                             @click="sortBy('id')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            ID
+                            {{ $t('clients.columns.id') }}
                             <span v-if="sortField === 'id'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
                             @click="sortBy('name')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            Name
+                            {{ $t('clients.columns.name') }}
                             <span v-if="sortField === 'name'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
                             @click="sortBy('address')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            Address
+                            {{ $t('clients.columns.address') }}
                             <span v-if="sortField === 'address'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
                             @click="sortBy('postcode')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            Postcode
+                            {{ $t('clients.columns.postcode') }}
                             <span v-if="sortField === 'postcode'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
                             @click="sortBy('created_at')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            Created At
+                            {{ $t('clients.columns.createdAt') }}
                             <span v-if="sortField === 'created_at'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                         <th 
                             @click="sortBy('updated_at')" 
                             class="hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium text-gray-500 dark:text-gray-300 text-xs text-left uppercase tracking-wider cursor-pointer"
                         >
-                            Updated At
+                            {{ $t('clients.columns.updatedAt') }}
                             <span v-if="sortField === 'updated_at'">{{ sortOrder === 1 ? '↑' : '↓' }}</span>
                         </th>
                     </tr>
@@ -105,7 +105,7 @@
         <!-- Pagination -->
         <div class="flex justify-between items-center mt-4">
             <div class="text-gray-700 dark:text-gray-300 text-sm">
-                Showing {{ startIndex + 1 }} to {{ Math.min(endIndex, sortedClients.length) }} of {{ sortedClients.length }} results
+                {{ $t('clients.pagination.showing') }} {{ startIndex + 1 }} {{ $t('clients.pagination.to') }} {{ Math.min(endIndex, sortedClients.length) }} {{ $t('clients.pagination.of') }} {{ sortedClients.length }} {{ $t('clients.pagination.results') }}
             </div>
             <div class="flex gap-2">
                 <button
@@ -113,7 +113,7 @@
                     :disabled="currentPage === 1"
                     class="bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 disabled:opacity-50 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium text-gray-700 dark:text-gray-200 text-sm disabled:cursor-not-allowed"
                 >
-                    Previous
+                    {{ $t('clients.pagination.previous') }}
                 </button>
                 <button
                     v-for="page in totalPages"
@@ -133,7 +133,7 @@
                     :disabled="currentPage === totalPages"
                     class="bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 disabled:opacity-50 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium text-gray-700 dark:text-gray-200 text-sm disabled:cursor-not-allowed"
                 >
-                    Next
+                    {{ $t('clients.pagination.next') }}
                 </button>
             </div>
         </div>

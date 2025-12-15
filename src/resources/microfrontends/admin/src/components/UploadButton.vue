@@ -7,7 +7,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            Upload File
+            {{ $t('upload.button') }}
         </button>
 
         <!-- Modal Backdrop -->
@@ -39,7 +39,7 @@
                     >
                         <!-- Header -->
                         <div class="flex justify-between items-center px-6 py-4 border-gray-200 dark:border-gray-700 border-b">
-                            <h2 class="font-semibold text-gray-900 dark:text-gray-100 text-xl">Upload File</h2>
+                            <h2 class="font-semibold text-gray-900 dark:text-gray-100 text-xl">{{ $t('upload.title') }}</h2>
                             <button
                                 @click="closeDialog"
                                 class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -55,7 +55,7 @@
                             <div class="flex flex-col gap-6">
                                 <div class="flex flex-col gap-4">
                                     <label for="file-upload" class="font-semibold text-gray-900 dark:text-gray-100">
-                                        Select a JSON file to upload
+                                        {{ $t('upload.selectFile') }}
                                     </label>
                                     
                                     <div class="relative">
@@ -96,7 +96,7 @@
                                 @click="closeDialog"
                                 class="bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium text-gray-700 dark:text-gray-200 transition-colors"
                             >
-                                Cancel
+                                {{ $t('upload.cancel') }}
                             </button>
                             <button
                                 @click="handleUpload"
@@ -106,7 +106,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
-                                Upload
+                                {{ $t('upload.upload') }}
                             </button>
                         </div>
                     </div>
@@ -118,6 +118,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const emit = defineEmits<{
     uploadComplete: [result: { inserted: number; skipped: number }]
@@ -135,7 +137,7 @@ const handleFileSelect = (event: Event) => {
         selectedFile.value = file;
     } else if (file) {
         // Clear the invalid file
-        console.warn('Please select a valid JSON file');
+        console.warn($t('upload.invalidFormat'));
         if (fileInput.value) {
             fileInput.value.value = '';
         }
@@ -166,7 +168,7 @@ const handleUpload = async () => {
 
         // Validate that it's an array
         if (!Array.isArray(rawClients)) {
-            console.error('Invalid JSON format: Expected an array of clients');
+            console.error($t('upload.invalidFormat'));
             return;
         }
 
@@ -189,16 +191,16 @@ const handleUpload = async () => {
         const result: any = await response.json();
 
         if (response.ok) {
-            console.log('Upload successful:', result);
-            console.log(`Import completed! Inserted: ${result.inserted}, Skipped (duplicates): ${result.skipped}`);
+            console.log($t('upload.success'), result);
+            console.log(`${$t('upload.success')}: ${$t('upload.fileName')}: ${result.inserted}, ${$t('upload.error')}: ${result.skipped}`);
             emit('uploadComplete', { inserted: result.inserted, skipped: result.skipped });
             closeDialog();
         } else {
-            console.error('Upload failed:', result);
-            console.error(`Upload failed: ${result.message}`);
+            console.error($t('upload.error'), result);
+            console.error(`${$t('upload.error')}: ${result.message}`);
         }
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error($t('upload.error'), error);
     }
 };
 

@@ -1,10 +1,10 @@
 <template>
     <div class="p-6">
-        <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">Activity Logs</h1>
+        <h1 class="mb-6 font-semibold text-gray-800 dark:text-gray-100 text-3xl">{{ $t('activities.title') }}</h1>
 
         <!-- Activity Logs Section -->
         <div class="bg-white dark:bg-gray-900 shadow mb-8 p-6 rounded-lg">
-            <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">User Actions</h2>
+            <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">{{ $t('activities.userActions') }}</h2>
             
             <!-- Loading State -->
             <div v-if="activityLoading" class="flex justify-center items-center py-12">
@@ -16,7 +16,7 @@
                 <p class="text-red-800 dark:text-red-200">{{ activityError }}</p>
                 <Button 
                     @click="fetchActivityLogs" 
-                    label="Retry"
+                    :label="$t('activities.retry')"
                     severity="danger"
                     class="mt-2"
                 />
@@ -34,29 +34,29 @@
             >
                 <template #empty>
                     <div class="py-8 text-center">
-                        <p class="text-gray-600 dark:text-gray-400">No activity logs found</p>
+                        <p class="text-gray-600 dark:text-gray-400">{{ $t('activities.noLogs') }}</p>
                     </div>
                 </template>
 
-                <Column field="id" header="ID" sortable>
+                <Column field="id" :header="$t('activities.columns.id')" sortable>
                     <template #body="{ data }">
                         <span class="font-mono text-sm">{{ data.id }}</span>
                     </template>
                 </Column>
 
-                <Column field="action" header="Action" sortable>
+                <Column field="action" :header="$t('activities.columns.action')" sortable>
                     <template #body="{ data }">
                         <Tag :value="data.action" :severity="getActionSeverity(data.action)" />
                     </template>
                 </Column>
 
-                <Column field="code" header="Code" sortable>
+                <Column field="code" :header="$t('activities.columns.code')" sortable>
                     <template #body="{ data }">
                         <Tag :value="data.code.toString()" :severity="getCodeSeverity(data.code)" />
                     </template>
                 </Column>
 
-                <Column field="payload" header="Details" style="min-width: 300px">
+                <Column field="payload" :header="$t('activities.columns.details')" style="min-width: 300px">
                     <template #body="{ data }">
                         <div class="text-sm">
                             <div v-if="getPayload(data.payload).name" class="font-semibold">{{ getPayload(data.payload).name }}</div>
@@ -65,7 +65,7 @@
                     </template>
                 </Column>
 
-                <Column field="created_at" header="Timestamp" sortable>
+                <Column field="created_at" :header="$t('activities.columns.timestamp')" sortable>
                     <template #body="{ data }">
                         <span class="text-sm">{{ formatDate(data.created_at) }}</span>
                     </template>
@@ -75,7 +75,7 @@
 
         <!-- Outgoing Requests Section -->
         <div class="bg-white dark:bg-gray-900 shadow p-6 rounded-lg">
-            <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">Outgoing API Requests</h2>
+            <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">{{ $t('activities.outgoingRequests') }}</h2>
             
             <!-- Loading State -->
             <div v-if="requestsLoading" class="flex justify-center items-center py-12">
@@ -87,7 +87,7 @@
                 <p class="text-red-800 dark:text-red-200">{{ requestsError }}</p>
                 <Button 
                     @click="fetchOutgoingRequests" 
-                    label="Retry"
+                    :label="$t('activities.retry')"
                     severity="danger"
                     class="mt-2"
                 />
@@ -105,35 +105,35 @@
             >
                 <template #empty>
                     <div class="py-8 text-center">
-                        <p class="text-gray-600 dark:text-gray-400">No outgoing requests found</p>
+                        <p class="text-gray-600 dark:text-gray-400">{{ $t('activities.noRequests') }}</p>
                     </div>
                 </template>
 
-                <Column field="id" header="ID" sortable>
+                <Column field="id" :header="$t('activities.columns.id')" sortable>
                     <template #body="{ data }">
                         <span class="font-mono text-sm">{{ data.id }}</span>
                     </template>
                 </Column>
 
-                <Column field="method" header="Method" sortable>
+                <Column field="method" :header="$t('activities.columns.method')" sortable>
                     <template #body="{ data }">
                         <Tag :value="data.method" :severity="getMethodSeverity(data.method)" />
                     </template>
                 </Column>
 
-                <Column field="endpoint" header="Endpoint" sortable>
+                <Column field="endpoint" :header="$t('activities.columns.endpoint')" sortable>
                     <template #body="{ data }">
                         <span class="font-mono text-sm break-all">{{ data.endpoint }}</span>
                     </template>
                 </Column>
 
-                <Column field="code" header="Status" sortable>
+                <Column field="code" :header="$t('activities.columns.status')" sortable>
                     <template #body="{ data }">
                         <Tag :value="data.code.toString()" :severity="getCodeSeverity(data.code)" />
                     </template>
                 </Column>
 
-                <Column field="payload" header="Payload" style="min-width: 250px">
+                <Column field="payload" :header="$t('activities.columns.payload')" style="min-width: 250px">
                     <template #body="{ data }">
                         <div class="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto font-mono text-xs">
                             {{ JSON.stringify(data.payload, null, 2) }}
@@ -141,7 +141,7 @@
                     </template>
                 </Column>
 
-                <Column field="created_at" header="Timestamp" sortable>
+                <Column field="created_at" :header="$t('activities.columns.timestamp')" sortable>
                     <template #body="{ data }">
                         <span class="text-sm">{{ formatDate(data.created_at) }}</span>
                     </template>

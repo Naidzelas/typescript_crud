@@ -29,7 +29,7 @@
               >
                 <span
                   class="font-semibold text-primary-contrast text-base leading-tight"
-                  >Home</span
+                  >{{ $t('dashboard.home') }}</span
                 >
                 <i
                   class="ml-auto text-base! text-primary-contrast leading-none! pi pi-angle-down"
@@ -46,7 +46,7 @@
                       class="text-base! text-primary-contrast leading-none! pi pi-home"
                     />
                     <span class="font-medium text-base leading-tight"
-                      >Clients</span
+                      >{{ $t('navigation.clients') }}</span
                     >
                   </a>
                 </li>
@@ -60,7 +60,7 @@
                       class="text-base! text-primary-contrast leading-none! pi pi-bookmark"
                     />
                     <span class="font-medium text-base leading-tight"
-                      >Activity logs</span
+                      >{{ $t('navigation.activityLogs') }}</span
                     >
                   </a>
                 </li>

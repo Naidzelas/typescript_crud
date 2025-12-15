@@ -1,0 +1,90 @@
+{
+    "dashboard": {
+        "home": "Home"
+    },
+    "navigation": {
+        "clients": "Clients",
+        "activityLogs": "Activity logs"
+    },
+    "clients": {
+        "title": "Clients",
+        "loading": "Loading...",
+        "error": "Error loading clients",
+        "retry": "Retry",
+        "noClients": "No clients found",
+        "columns": {
+            "id": "ID",
+            "name": "Name",
+            "address": "Address",
+            "postcode": "Postcode",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At"
+        },
+        "pagination": {
+            "showing": "Showing",
+            "to": "to",
+            "of": "of",
+            "results": "results",
+            "previous": "Previous",
+            "next": "Next"
+        }
+    },
+    "upload": {
+        "button": "Upload File",
+        "title": "Upload File",
+        "selectFile": "Select a JSON file to upload",
+        "fileName": "File name",
+        "fileSize": "File size",
+        "cancel": "Cancel",
+        "upload": "Upload",
+        "success": "Upload successful",
+        "error": "Upload failed",
+        "invalidFormat": "Invalid JSON format: Expected an array of clients"
+    },
+    "updatePostcodes": {
+        "title": "Update Postcodes",
+        "description": "This tool will automatically update postcodes for all clients that don't have one. It uses the Postit.lt API to search for postcodes based on client addresses.",
+        "button": "Update All Postcodes",
+        "updating": "Updating...",
+        "clearMessages": "Clear Messages",
+        "totalProcessed": "Total processed",
+        "successfullyUpdated": "Successfully updated",
+        "failed": "Failed",
+        "errorsEncountered": "Errors encountered",
+        "moreErrors": "and {count} more errors",
+        "updatingPostcodes": "Updating postcodes...",
+        "pleaseWait": "Please wait",
+        "apiHealthCheckFailed": "API Health Check Failed",
+        "notes": {
+            "title": "Note:",
+            "onlyMissing": "Only clients without postcodes will be updated",
+            "timeRequired": "The process may take a few minutes depending on the number of clients",
+            "invalidAddresses": "Invalid addresses may not be found in the Postit database"
+        }
+    },
+    "activities": {
+        "title": "Activity Logs",
+        "userActions": "User Actions",
+        "outgoingRequests": "Outgoing API Requests",
+        "noLogs": "No activity logs found",
+        "noRequests": "No outgoing requests found",
+        "retry": "Retry",
+        "columns": {
+            "id": "ID",
+            "action": "Action",
+            "code": "Code",
+            "details": "Details",
+            "timestamp": "Timestamp",
+            "method": "Method",
+            "endpoint": "Endpoint",
+            "status": "Status",
+            "payload": "Payload"
+        }
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "success": "Success",
+        "close": "Close"
+    }
+}

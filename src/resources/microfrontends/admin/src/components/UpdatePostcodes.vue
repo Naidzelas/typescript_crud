@@ -1,10 +1,9 @@
 <template>
     <div class="bg-white dark:bg-gray-900 shadow p-6 rounded-lg">
-        <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">Update Postcodes</h2>
+        <h2 class="mb-4 font-semibold text-gray-900 dark:text-gray-100 text-2xl">{{ $t('updatePostcodes.title') }}</h2>
         
         <p class="mb-6 text-gray-600 dark:text-gray-400">
-            This tool will automatically update postcodes for all clients that don't have one.
-            It uses the Postit.lt API to search for postcodes based on client addresses.
+            {{ $t('updatePostcodes.description') }}
         </p>
 
         <!-- Status Messages -->
@@ -16,9 +15,9 @@
                 <div class="flex-1">
                     <p class="font-medium text-green-800 dark:text-green-200">{{ successMessage }}</p>
                     <div v-if="updateResult" class="mt-2 text-green-700 dark:text-green-300 text-sm">
-                        <p>Total processed: {{ updateResult.total }}</p>
-                        <p>Successfully updated: {{ updateResult.updated }}</p>
-                        <p>Failed: {{ updateResult.failed }}</p>
+                        <p>{{ $t('updatePostcodes.totalProcessed') }}: {{ updateResult.total }}</p>
+                        <p>{{ $t('updatePostcodes.successfullyUpdated') }}: {{ updateResult.updated }}</p>
+                        <p>{{ $t('updatePostcodes.failed') }}: {{ updateResult.failed }}</p>
                     </div>
                 </div>
             </div>
@@ -37,11 +36,11 @@
 
         <!-- Errors List -->
         <div v-if="updateResult?.errors && updateResult.errors.length > 0" class="bg-yellow-50 dark:bg-yellow-900/20 mb-4 px-4 py-3 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p class="mb-2 font-medium text-yellow-800 dark:text-yellow-200">Errors encountered:</p>
+            <p class="mb-2 font-medium text-yellow-800 dark:text-yellow-200">{{ $t('updatePostcodes.errorsEncountered') }}:</p>
             <ul class="space-y-1 text-yellow-700 dark:text-yellow-300 text-sm list-disc list-inside">
                 <li v-for="(error, index) in updateResult.errors.slice(0, 10)" :key="index">{{ error }}</li>
                 <li v-if="updateResult.errors.length > 10" class="font-medium">
-                    ... and {{ updateResult.errors.length - 10 }} more errors
+                    {{ $t('updatePostcodes.moreErrors', { count: updateResult.errors.length - 10 }) }}
                 </li>
             </ul>
         </div>
@@ -49,8 +48,8 @@
         <!-- Progress Bar -->
         <div v-if="isUpdating" class="mb-6">
             <div class="flex justify-between mb-2 text-sm">
-                <span class="text-gray-700 dark:text-gray-300">Updating postcodes...</span>
-                <span class="text-gray-700 dark:text-gray-300">Please wait</span>
+                <span class="text-gray-700 dark:text-gray-300">{{ $t('updatePostcodes.updatingPostcodes') }}</span>
+                <span class="text-gray-700 dark:text-gray-300">{{ $t('updatePostcodes.pleaseWait') }}</span>
             </div>
             <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                 <div class="bg-blue-600 dark:bg-blue-500 rounded-full h-full animate-pulse" style="width: 100%"></div>
@@ -71,7 +70,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {{ isUpdating ? 'Updating...' : 'Update All Postcodes' }}
+                {{ isUpdating ? $t('updatePostcodes.updating') : $t('updatePostcodes.button') }}
             </button>
 
             <button
@@ -79,7 +78,7 @@
                 @click="clearMessages"
                 class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-6 py-2.5 rounded-lg font-medium text-gray-700 dark:text-gray-200 transition-colors"
             >
-                Clear Messages
+                {{ $t('updatePostcodes.clearMessages') }}
             </button>
         </div>
 
@@ -90,11 +89,11 @@
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <div class="text-blue-700 dark:text-blue-300 text-sm">
-                    <p class="font-medium">Note:</p>
+                    <p class="font-medium">{{ $t('updatePostcodes.notes.title') }}</p>
                     <ul class="space-y-1 mt-1 list-disc list-inside">
-                        <li>Only clients without postcodes will be updated</li>
-                        <li>The process may take a few minutes depending on the number of clients</li>
-                        <li>Invalid addresses may not be found in the Postit database</li>
+                        <li>{{ $t('updatePostcodes.notes.onlyMissing') }}</li>
+                        <li>{{ $t('updatePostcodes.notes.timeRequired') }}</li>
+                        <li>{{ $t('updatePostcodes.notes.invalidAddresses') }}</li>
                     </ul>
                 </div>
             </div>
@@ -104,6 +103,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const emit = defineEmits<{
     updateComplete: [result: { updated: number; failed: number; total: number }]
@@ -135,7 +136,7 @@ const updatePostcodes = async () => {
         const healthData = await healthResponse.json() as { success: boolean; message: string };
         
         if (!healthData.success) {
-            errorMessage.value = `API Health Check Failed: ${healthData.message}`;
+            errorMessage.value = `${$t('updatePostcodes.apiHealthCheckFailed')}: ${healthData.message}`;
             isUpdating.value = false;
             return;
         }
@@ -155,10 +156,10 @@ const updatePostcodes = async () => {
             updateResult.value = data;
             emit('updateComplete', { updated: data.updated, failed: data.failed, total: data.total });
         } else {
-            errorMessage.value = data.message || 'Failed to update postcodes';
+            errorMessage.value = data.message || $t('updatePostcodes.failed');
         }
     } catch (error) {
-        errorMessage.value = error instanceof Error ? error.message : 'An error occurred while updating postcodes';
+        errorMessage.value = error instanceof Error ? error.message : $t('updatePostcodes.error');
     } finally {
         isUpdating.value = false;
     }
