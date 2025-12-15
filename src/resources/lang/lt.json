@@ -1,0 +1,90 @@
+{
+    "dashboard": {
+        "home": "Pagrindinis"
+    },
+    "navigation": {
+        "clients": "Klientai",
+        "activityLogs": "Veiklos žurnalas"
+    },
+    "clients": {
+        "title": "Klientai",
+        "loading": "Kraunama...",
+        "error": "Klaida įkeliant klientus",
+        "retry": "Bandyti dar kartą",
+        "noClients": "Klientų nerasta",
+        "columns": {
+            "id": "ID",
+            "name": "Pavadinimas",
+            "address": "Adresas",
+            "postcode": "Pašto kodas",
+            "createdAt": "Sukurta",
+            "updatedAt": "Atnaujinta"
+        },
+        "pagination": {
+            "showing": "Rodoma",
+            "to": "iki",
+            "of": "iš",
+            "results": "rezultatų",
+            "previous": "Ankstesnis",
+            "next": "Kitas"
+        }
+    },
+    "upload": {
+        "button": "Įkelti failą",
+        "title": "Įkelti failą",
+        "selectFile": "Pasirinkite JSON failą įkėlimui",
+        "fileName": "Failo pavadinimas",
+        "fileSize": "Failo dydis",
+        "cancel": "Atšaukti",
+        "upload": "Įkelti",
+        "success": "Įkėlimas sėkmingas",
+        "error": "Įkėlimas nepavyko",
+        "invalidFormat": "Neteisingas JSON formatas: Tikimasi klientų masyvo"
+    },
+    "updatePostcodes": {
+        "title": "Atnaujinti pašto kodus",
+        "description": "Šis įrankis automatiškai atnaujins pašto kodus visiems klientams, kurie jo neturi. Jis naudoja Postit.lt API pašto kodų paieškai pagal klientų adresus.",
+        "button": "Atnaujinti visus pašto kodus",
+        "updating": "Atnaujinama...",
+        "clearMessages": "Išvalyti pranešimus",
+        "totalProcessed": "Iš viso apdorota",
+        "successfullyUpdated": "Sėkmingai atnaujinta",
+        "failed": "Nepavyko",
+        "errorsEncountered": "Aptiktos klaidos",
+        "moreErrors": "ir dar {count} klaidų",
+        "updatingPostcodes": "Atnaujinami pašto kodai...",
+        "pleaseWait": "Prašome palaukti",
+        "apiHealthCheckFailed": "API sveikatos patikra nepavyko",
+        "notes": {
+            "title": "Pastaba:",
+            "onlyMissing": "Bus atnaujinti tik klientai be pašto kodų",
+            "timeRequired": "Procesas gali užtrukti kelias minutes priklausomai nuo klientų skaičiaus",
+            "invalidAddresses": "Neteisingi adresai gali nebūti rasti Postit duomenų bazėje"
+        }
+    },
+    "activities": {
+        "title": "Veiklos žurnalas",
+        "userActions": "Vartotojo veiksmai",
+        "outgoingRequests": "Išorės API užklausos",
+        "noLogs": "Veiklos įrašų nerasta",
+        "noRequests": "Išorės užklausų nerasta",
+        "retry": "Bandyti dar kartą",
+        "columns": {
+            "id": "ID",
+            "action": "Veiksmas",
+            "code": "Kodas",
+            "details": "Detalės",
+            "timestamp": "Laikas",
+            "method": "Metodas",
+            "endpoint": "Galinis taškas",
+            "status": "Būsena",
+            "payload": "Duomenys"
+        }
+    },
+    "common": {
+        "loading": "Kraunama...",
+        "error": "Įvyko klaida",
+        "success": "Sėkmingai",
+        "close": "Uždaryti"
+    }
+}
