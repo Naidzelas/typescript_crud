@@ -38,9 +38,9 @@ https://github.com/user-attachments/assets/6cb0d6f4-2f80-4b0e-ae6e-e8b385eac7cf
 
 ----
 ## TODO's
-- i18n for localization
-- TypeORM or any equivalent for migration managing.
-- Fix PrimeVue passthrough (currently styles not applying)
-- Schedules with jobs for API calls
+- [x] i18n for localization
+- [ ] TypeORM or any equivalent for migration managing.
+- [ ] Fix PrimeVue passthrough (currently styles not applying)
+- [ ] Schedules with jobs for API calls
 
 
