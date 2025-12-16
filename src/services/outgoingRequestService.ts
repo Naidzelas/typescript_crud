@@ -1,9 +1,9 @@
-import { getConnection } from '../database';
-import { OutgoingRequest } from '../types';
-import sql from 'mssql';
+import { OutgoingRequest as OutgoingRequestType } from '../types';
+import { AppDataSource } from '../data-source';
+import { OutgoingRequest } from '../entity/OutgoingRequest';
 
 export class OutgoingRequestService {
-  async logRequest(request: OutgoingRequest): Promise<void> {
+  async logRequest(request: OutgoingRequestType): Promise<void> {
     try {
       console.log('[OutgoingRequestService] Logging request:', { 
         endpoint: request.endpoint, 
@@ -11,35 +11,32 @@ export class OutgoingRequestService {
         code: request.code 
       });
       
-      const pool = await getConnection();
-      const result = await pool
-        .request()
-        .input('endpoint', sql.NVarChar(255), request.endpoint)
-        .input('method', sql.NVarChar(10), request.method)
-        .input('payload', sql.NVarChar(sql.MAX), JSON.stringify(request.payload))
-        .input('code', sql.Int, request.code)
-        .query(`
-          INSERT INTO outgoing_requests (endpoint, method, payload, code)
-          VALUES (@endpoint, @method, @payload, @code)
-        `);
+      const requestRepo = AppDataSource.getRepository(OutgoingRequest);
+      const newRequest = requestRepo.create({
+        endpoint: request.endpoint,
+        method: request.method,
+        payload: JSON.stringify(request.payload),
+        code: request.code
+      });
+      await requestRepo.save(newRequest);
       
-      console.log('[OutgoingRequestService] Request logged successfully, rows affected:', result.rowsAffected);
+      console.log('[OutgoingRequestService] Request logged successfully');
     } catch (error) {
       console.error('[OutgoingRequestService] Error logging outgoing request:', error);
       throw error;
     }
   }
 
-  async getAllRequests(): Promise<OutgoingRequest[]> {
+  async getAllRequests(): Promise<OutgoingRequestType[]> {
     try {
-      const pool = await getConnection();
-      const result = await pool
-        .request()
-        .query(`
-          SELECT * FROM outgoing_requests
-          ORDER BY created_at DESC
-        `);
-      return result.recordset;
+      const requestRepo = AppDataSource.getRepository(OutgoingRequest);
+      const requests = await requestRepo.find({
+        order: { created_at: 'DESC' }
+      });
+      return requests.map(req => ({
+        ...req,
+        payload: JSON.parse(req.payload)
+      }));
     } catch (error) {
       console.error('Error fetching outgoing requests:', error);
       throw error;

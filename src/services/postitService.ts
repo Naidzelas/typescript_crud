@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { config } from '../config';
-import { getConnection } from '../database';
-import sql from 'mssql';
 import { OutgoingRequestService } from './outgoingRequestService';
+import { AppDataSource } from '../data-source';
+import { Client } from '../entity/Client';
 
 interface PostitApiResponse {
   status: string;
@@ -94,13 +94,12 @@ export class PostitService {
    */
   async updateAllPostCodes(): Promise<UpdateResult> {
     try {
-      const pool = await getConnection();
+      const clientRepo = AppDataSource.getRepository(Client);
       
       // Get all clients without postcodes or with empty postcodes
-      const clientsResult = await pool.request()
-        .query(`SELECT id, name, address, postcode FROM clients WHERE postcode IS NULL OR postcode = ''`);
-      
-      const clients = clientsResult.recordset;
+      const clients = await clientRepo.createQueryBuilder('client')
+        .where('client.postcode IS NULL OR client.postcode = :empty', { empty: '' })
+        .getMany();
       
       if (clients.length === 0) {
         return {
@@ -119,14 +118,18 @@ export class PostitService {
 
       for (const client of clients) {
         try {
+          if (!client.address) {
+            failed++;
+            errors.push(`Client ${client.name}: No address available`);
+            continue;
+          }
+
           const postcode = await this.getPostCodeByAddress(client.address);
           
           if (postcode) {
             // Update client with the postcode
-            await pool.request()
-              .input('id', sql.Int, client.id)
-              .input('postcode', sql.NVarChar(20), postcode)
-              .query('UPDATE clients SET postcode = @postcode WHERE id = @id');
+            client.postcode = postcode;
+            await clientRepo.save(client);
             
             updated++;
           } else {

@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity('clients')
 export class Client {
     @PrimaryGeneratedColumn()
     id?: number;
@@ -8,15 +8,15 @@ export class Client {
     @Column()
     name!: string;
 
-    @Column()
-    address!: string;
+    @Column({ nullable: true })
+    address?: string;
 
-    @Column()
+    @Column({ nullable: true })
     postcode?: string;
 
-    @Column("datetime")
+    @CreateDateColumn({ type: "datetime2" })
     created_at?: Date;
 
-    @Column("datetime")
+    @UpdateDateColumn({ type: "datetime2" })
     updated_at?: Date;
 }

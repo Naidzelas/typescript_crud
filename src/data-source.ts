@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from './config';
 import { Client } from './entity/Client';
+import { AppActivityLog } from './entity/AppActivityLog';
+import { OutgoingRequest } from './entity/OutgoingRequest';
 
 export const AppDataSource = new DataSource({
   type: 'mssql',
@@ -10,9 +12,9 @@ export const AppDataSource = new DataSource({
   username: config.database.user,
   password: config.database.password,
   database: config.database.database,
-  synchronize: true, // false in production
+  synchronize: false, // Disabled to prevent automatic schema changes
   logging: false,
-  entities: [Client],
+  entities: [Client, AppActivityLog, OutgoingRequest],
   options: { 
     encrypt: true,
     trustServerCertificate: true
