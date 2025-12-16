@@ -1,6 +1,7 @@
 import { getConnection } from '../database';
 import { AppActivityLog } from '../types';
 import sql from 'mssql';
+import { AppDataSource } from '../data-source';
 
 export class LogService {
   async createLog(log: AppActivityLog): Promise<void> {

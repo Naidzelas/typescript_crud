@@ -1,32 +1,33 @@
-import { Client } from "../../types";
+import { ClientType } from "../../types";
 import sql from 'mssql';
 import { getConnection } from "../../database";
 import { LogService } from "../../services/logService";
+import { Client } from "../../entity/Client";
+import { AppDataSource } from "../../data-source";
 
 export class ClientController {
-
-
     async index(req: any, res: any): Promise<void> {
         try {
-            const pool = await getConnection();
-            const result = await pool.request().query('SELECT * FROM clients');
-            res.json(result.recordset);
+            const clientRepo = AppDataSource.getRepository(Client);
+            const result = await clientRepo.createQueryBuilder('client').getMany();
+            res.json(result);
         } catch (error) {
             res.status(500).json({ message: 'Error fetching clients', error });
         }
     }
 
     async store(req: any, res: any): Promise<void> {
-        const client: Client = req.body;
+        const client: ClientType = req.body;
         const logService = new LogService();
         
         try {
-            const pool = await getConnection();
-            await pool.request()
-                .input('name', sql.NVarChar(255), client.name)
-                .input('address', sql.NVarChar(500), client.address)
-                .input('postcode', sql.NVarChar(20), client.postcode || '')
-                .query('INSERT INTO clients (name, address, postcode) VALUES (@name, @address, @postcode)');
+            const clientRepo = AppDataSource.getRepository(Client);
+            const newClient = clientRepo.create({
+                name: client.name,
+                address: client.address,
+                postcode: client.postcode || ''
+            });
+            await clientRepo.save(newClient);
             
             await logService.createLog({
                 code: 201,
@@ -52,7 +53,7 @@ export class ClientController {
     }
 
     async update(req: any, res: any): Promise<void> {
-        const client: Client = req.body;
+        const client: ClientType = req.body;
         const logService = new LogService();
         
         try {
@@ -87,7 +88,7 @@ export class ClientController {
         }
     }
 
-    async getAllClients(): Promise<Client[]> {
+    async getAllClients(): Promise<ClientType[]> {
         try {
             const pool = await getConnection();
             const result = await pool.request().query('SELECT * FROM clients');
@@ -98,7 +99,7 @@ export class ClientController {
     }
 
     async bulkStore(req: any, res: any): Promise<void> {
-        const clients: Client[] = req.body.clients;
+        const clients: ClientType[] = req.body.clients;
         const logService = new LogService();
         
         if (!Array.isArray(clients)) {
