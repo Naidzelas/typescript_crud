@@ -1,5 +1,10 @@
 <template>
+  <!-- Full-page router view for Canias -->
+  <router-view v-if="currentPage === 'canias'" />
+
+  <!-- Main layout with sidebar for other pages -->
   <div
+    v-else
     class="lg:static relative flex bg-surface-50 dark:bg-surface-950 min-h-screen resize-container-2"
   >
     <div
@@ -29,7 +34,7 @@
               >
                 <span
                   class="font-semibold text-primary-contrast text-base leading-tight"
-                  >{{ $t('dashboard.home') }}</span
+                  >{{ $t("dashboard.home") }}</span
                 >
                 <i
                   class="ml-auto text-base! text-primary-contrast leading-none! pi pi-angle-down"
@@ -40,28 +45,45 @@
                   <a
                     @click="currentPage = 'clients'"
                     class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
-                    :class="{ 'bg-primary-emphasis': currentPage === 'clients' }"
+                    :class="{
+                      'bg-primary-emphasis': currentPage === 'clients',
+                    }"
                   >
                     <i
                       class="text-base! text-primary-contrast leading-none! pi pi-home"
                     />
-                    <span class="font-medium text-base leading-tight"
-                      >{{ $t('navigation.clients') }}</span
-                    >
+                    <span class="font-medium text-base leading-tight">{{
+                      $t("navigation.clients")
+                    }}</span>
                   </a>
                 </li>
                 <li>
                   <a
                     @click="currentPage = 'activities'"
                     class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
-                    :class="{ 'bg-primary-emphasis': currentPage === 'activities' }"
+                    :class="{
+                      'bg-primary-emphasis': currentPage === 'activities',
+                    }"
                   >
                     <i
                       class="text-base! text-primary-contrast leading-none! pi pi-bookmark"
                     />
-                    <span class="font-medium text-base leading-tight"
-                      >{{ $t('navigation.activityLogs') }}</span
-                    >
+                    <span class="font-medium text-base leading-tight">{{
+                      $t("navigation.activityLogs")
+                    }}</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    @click="handleRedirect('Canias')"
+                    class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
+                  >
+                    <i
+                      class="text-base! text-primary-contrast leading-none! pi pi-objects-column"
+                    />
+                    <span class="font-medium text-base leading-tight">{{
+                      $t("navigation.canias")
+                    }}</span>
                   </a>
                 </li>
               </ul>
@@ -101,21 +123,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import Clients from "client/Clients";
 import UploadButton from "admin/UploadButton";
 import UpdatePostcodes from "admin/UpdatePostcodes";
 import Activities from "./pages/Activities.vue";
 import ScrollPanel from "primevue/scrollpanel";
 
-const currentPage = ref<'clients' | 'activities'>('clients');
+const currentPage = ref<"clients" | "activities" | "canias">("clients");
 const clientsRef = ref<InstanceType<typeof Clients> | null>(null);
+const router = useRouter();
 
 const handleUploadComplete = () => {
-    clientsRef.value?.refresh();
+  clientsRef.value?.refresh();
 };
 
 const handleUpdateComplete = () => {
-    clientsRef.value?.refresh();
+  clientsRef.value?.refresh();
 };
+
+function handleRedirect(page: string) {
+  currentPage.value = "canias";
+  router.push({ name: page });
+}
 </script>
