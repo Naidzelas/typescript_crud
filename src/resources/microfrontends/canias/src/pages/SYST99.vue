@@ -110,7 +110,7 @@
 import { ref, computed } from 'vue'
 
 // State
-const sqlQuery = ref('SELECT * FROM client')
+const sqlQuery = ref('SELECT * FROM clients')
 const queryName = ref('STANDART')
 const fileName = ref('')
 const isExecuting = ref(false)
