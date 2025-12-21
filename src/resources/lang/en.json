@@ -4,7 +4,8 @@
     },
     "navigation": {
         "clients": "Clients",
-        "activityLogs": "Activity logs"
+        "activityLogs": "Activity logs",
+        "canias": "Canias"
     },
     "clients": {
         "title": "Clients",

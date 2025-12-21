@@ -11,7 +11,7 @@ export default defineConfig({
       name: 'canias',
       filename: 'remoteEntry.js',
       exposes: {
-        './Canias': './src/pages/Canias.vue',
+        './SYST99': './src/pages/SYST99.vue',
       },
       shared: {
         vue: { version: '^3.5.24' },
@@ -24,6 +24,12 @@ export default defineConfig({
     cors: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
   build: {

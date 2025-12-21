@@ -12,6 +12,7 @@ export default defineConfig({
       remotes: {
         client: "http://localhost:5010/assets/remoteEntry.js",
         admin: "http://localhost:5012/assets/remoteEntry.js",
+        canias: "http://localhost:5014/assets/remoteEntry.js",
       },
       shared: {
         vue: { version: "^3.5.24" },

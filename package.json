@@ -3,11 +3,12 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "ts-node src/server.ts",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:host\" \"npm run dev:admin\" \"npm run dev:client\"",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:host\" \"npm run dev:admin\" \"npm run dev:client\" \"npm run dev:canias\"",
     "dev:host": "cd src/resources && npm run dev",
     "dev:admin": "cd src/resources/microfrontends/admin && npm run start-mf",
     "dev:client": "cd src/resources/microfrontends/client && npm run start-mf",
-    "install:all": "npm install && cd src/resources && npm install && cd microfrontends/admin && npm install && cd ../client && npm install"
+    "dev:canias": "cd src/resources/microfrontends/canias && npm run start-mf",
+    "install:all": "npm install && cd src/resources && npm install && cd microfrontends/admin && npm install && cd ../client && npm install && cd ../canias && npm install"
   },
   "dependencies": {
     "axios": "^1.13.2",

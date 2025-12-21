@@ -15,3 +15,14 @@ router.get('/canias/syst99', async (req: Request, res: Response) => {
     });
     return syst99Controller.index(req, res);
 });
+
+router.post('/canias/syst99/execute', async (req: Request, res: Response) => {
+    await logService.createLog({
+        code: 200,
+        action: 'SQL_QUERY_EXECUTED',
+        payload: { name: 'System', message: 'POST /canias/syst99/execute route accessed' }
+    });
+    return syst99Controller.executeQuery(req, res);
+});
+
+export default router;
