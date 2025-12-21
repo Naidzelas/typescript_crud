@@ -148,8 +148,8 @@ interface Client {
     name: string;
     address: string;
     postcode: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date | string | null;
+    updated_at?: Date | string | null;
 }
 
 const clients = ref<Client[]>([]);
@@ -200,6 +200,11 @@ const sortedClients = computed(() => {
         const aVal = a[field];
         const bVal = b[field];
 
+        // Handle null or undefined values
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return 1 * sortOrder.value;
+        if (bVal == null) return -1 * sortOrder.value;
+
         if (aVal < bVal) return -1 * sortOrder.value;
         if (aVal > bVal) return 1 * sortOrder.value;
         return 0;
@@ -223,15 +228,24 @@ const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
-const formatDate = (date: Date) => {
-    return new Date(date).toLocaleString('lt-LT', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
+const formatDate = (date: Date | string | null | undefined) => {
+    if (!date) return '-';
+    
+    try {
+        const parsedDate = new Date(date);
+        if (isNaN(parsedDate.getTime())) return '-';
+        
+        return parsedDate.toLocaleString('lt-LT', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    } catch {
+        return '-';
+    }
 };
 
 // Expose refresh method to parent component
