@@ -64,6 +64,20 @@
                     >
                   </a>
                 </li>
+                <li>
+                  <a
+                    @click="currentPage = 'canias'"
+                    class="flex items-center gap-2 hover:bg-primary-emphasis p-3 rounded-lg text-primary-contrast transition-colors duration-150 cursor-pointer"
+                    :class="{ 'bg-primary-emphasis': currentPage === 'canias' }"
+                  >
+                    <i
+                      class="text-base! text-primary-contrast leading-none! pi pi-bookmark"
+                    />
+                    <span class="font-medium text-base leading-tight"
+                      >{{ $t('navigation.activityLogs') }}</span
+                    >
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -108,7 +122,7 @@ import UpdatePostcodes from "admin/UpdatePostcodes";
 import Activities from "./pages/Activities.vue";
 import ScrollPanel from "primevue/scrollpanel";
 
-const currentPage = ref<'clients' | 'activities'>('clients');
+const currentPage = ref<'clients' | 'activities' | 'canias'>('clients');
 const clientsRef = ref<InstanceType<typeof Clients> | null>(null);
 
 const handleUploadComplete = () => {

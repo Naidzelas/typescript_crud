@@ -4,9 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "dev": "vite --port 5013 --strictPort",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview --port 5013 --strictPort",
+    "clean": "rm -rf dist",
+    "stop": "kill-port --port 5013",
+    "start-mf": "npm run build && npm run serve"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
